@@ -77,7 +77,8 @@
  <ol>
   <li>
   <h3>cloudtype을 이용한 백엔드 배포</h3>
-  <img width="1186" alt="스크린샷 2023-11-27 오후 11 43 06" src="https://github.com/inhatc-RPi/project/assets/22267184/fc12d31c-b572-47f5-9104-3399d4d918e4">
+  <img width="1186" alt="스크린샷 2023-11-27 오후 11 43 06" src="https://github.com/inhatc-RPi/project/assets/113498312/8a0240cd-3eed-4647-8c87-3db6f47d1e6e">
+   
   </li>
   <li>
    <h3>라즈베리파이 데이터 송수신 구현</h3>
@@ -114,8 +115,7 @@
  - 세미넷: [라즈베리파이를 이용한 화재 및 가스 누출 경보기](https://www.seminet.co.kr/channel_micro.html?menu=video_sub&com_no=918&video_id=7498&cate_no=44&cate_name=Raspberry+pi)
  - DBpia: [라즈베리파이와 가스센서를 이용한 화재 및 가스누출 감지기 개발](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE07467666)
  - vue_api: [vue와 api연동](https://jeong-dev-blog.tistory.com/4)
- - 농도 표: [위험 농도 수치표](https://thepoc.co.kr/57)
- - 일산화탄소 위험도: [일산화탄소 위험도 농도](http://www.gasnews.com/news/articleView.html?idxno=100107)
+ - 일산화탄소농도: [일산화탄소농도](https://m.airkorea.or.kr/main###)
 
 
 
