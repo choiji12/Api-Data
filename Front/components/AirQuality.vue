@@ -3,10 +3,28 @@
     <img src="@/assets/inhatc.png" alt="로고" class="logo" />
     <!--<h1>센서 값</h1>-->
     <div class="input-group">
-      <div class="sensor-average" :style="{ color: averageValue > 1000 ? 'red' : 'black' }">
-        <h4>평균 값: {{ averageValue }}</h4>
+      <div class="sensor-average" :style="{
+        color: 
+          averageValue > 15 ? 'red' :
+          averageValue > 9 ? 'orange' :
+          averageValue > 2 ? 'green' :
+          averageValue > 0.001 ? 'blue' :
+          'black'
+      }">
+        <h4>평균 값: {{ averageValue }} {{ interpretAverageValue(averageValue) }} </h4>
+        <span :style="{
+          color: 
+            averageValue > 15 ? 'red' :
+            averageValue > 9 ? 'orange' :
+            averageValue > 2 ? 'green' :
+            averageValue > 0.001 ? 'blue' :
+            'black'
+        }">
+          최근 값: {{ mostRecentValue }} {{ interpretAverageValue(mostRecentValue) }}
+        </span>
       </div>
       <select v-model="selectedSensor" class="select-sensor">
+        <option disabled value="null">센서 선택</option>
         <option v-for="sensor in sensorList" :key="sensor" :value="sensor">{{ sensor }}</option>
         <!-- 다른 센서 옵션을 추가 -->
       </select>
@@ -19,7 +37,7 @@
     <!-- 싸이클 POST -->
     <div class="input-group">
       <label for="cycleValue">측정주기:</label>
-      <input type="number" v-model="cycleValue" id="cycleValue" />
+      <input type="number" v-model="cycleValue" id="cycleValue" min="1000" />
       <button @click="changeCycle" class="change-cycle-button">변경</button>
     </div>
   </div>
@@ -32,12 +50,13 @@ import Chart from 'chart.js/auto';
 export default {
   data() {
     return {
-      selectedSensor: 'MQ5',
+      selectedSensor: null,
       responseData: null,
       chart: null,
       cycleValue: 3000,
       sensorList: [],
-      averageValue: 0 // 평균값을 저장할 변수 추가
+      averageValue: 0 ,
+      mostRecentValue: 0
     };
   },
   methods: {
@@ -53,8 +72,14 @@ export default {
       try {
         const response = await axios.get(`https://port-0-raspberry-pi-project-5mk12alpbcv53c.sel5.cloudtype.app/sensors/graph/${this.selectedSensor}`);
         this.responseData = response.data;
+        
         const average = this.calculateAverage(); // 평균값 계산
         this.renderChart(average); // 차트 렌더링에 평균값 전달
+        if (this.responseData.length > 0) {
+          this.mostRecentValue = this.responseData[0].measure_value;
+        } else {
+          this.mostRecentValue = 0; // 데이터가 없는 경우 기본값 설정 혹은 필요에 따라 처리
+        }
               
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -64,59 +89,74 @@ export default {
       const values = this.responseData.map(item => item.measure_value);
       const sum = values.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
       const average = sum / values.length;
-      const roundedAverage = average.toFixed(0);
+      const roundedAverage = average.toFixed(2);
       console.log(`선택된 센서에 대한 값의 평균: ${roundedAverage}`);
       this.averageValue = roundedAverage;
       return roundedAverage; // 평균값 반환
     },
+    interpretAverageValue(averageValue) {
+    if (averageValue >= 15) {
+      return '(매우나쁨)';
+    } else if (averageValue >= 9) {
+      return '(나쁨)';
+    } else if (averageValue >= 2) {
+      return '(보통)';
+    } else if (averageValue >= 0.001) {
+      return '(좋음)';
+    }
+  },
     renderChart(average) {
-      if (this.chart) {
-        this.chart.destroy(); // 기존 차트 제거
-      }
-      const labels = [];
-      const values = [];
+  if (this.chart) {
+    this.chart.destroy(); // 기존 차트 제거
+  }
+  const labels = [];
+  const values = [];
 
-      this.responseData.forEach(item => {
-        const date = new Date(item.measure_time);
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const seconds = date.getSeconds();
-        
-        labels.push(`${month}-${day} ${hours}:${minutes}:${seconds}`);
-        values.push(item.measure_value);
-      });
+  // 센서 데이터를 내림차순으로 정렬
+  this.responseData.sort((a, b) => new Date(b.measure_time) - new Date(a.measure_time));
 
-      const ctx = this.$refs.chartCanvas.getContext('2d');
-      this.chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: `${this.selectedSensor} Values`,
-              data: values,
-              backgroundColor: 'rgba(75, 192, 192, 1)',
-              borderColor: 'rgba(75, 192, 192, 1)', // 센서 값 선의 색상을 연한 파란색으로 변경
-              borderWidth: 3
-            },
-            {
-              label: 'Average',
-              data: Array(values.length).fill(average),
-              borderColor: 'rgba(0, 0, 200, 0.3)', // 평균값 선의 색상을 파란색으로 변경
-              borderWidth: 1, // 두께를 2로 증가
-              borderDash: [5, 3], // 점선 스타일을 [5, 3]으로 변경하여 더 짧은 점선으로 조정
-              fill: false
-            }
-          ]
+  this.responseData.forEach(item => {
+    const date = new Date(item.measure_time);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    
+    labels.push(`${month}-${day} ${hours}:${minutes}:${seconds}`);
+    values.push(item.measure_value);
+  });
+
+  const ctx = this.$refs.chartCanvas.getContext('2d');
+  this.chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels.reverse(), // labels 배열을 역순으로 변경하여 최신 데이터를 오른쪽에 표시
+      datasets: [
+        {
+          label: `${this.selectedSensor} Values`,
+          data: values.reverse(), // values 배열도 역순으로 변경
+          backgroundColor: 'rgba(75, 192, 192, 1)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 3
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false
+        {
+          label: 'Average',
+          data: Array(values.length).fill(average),
+          borderColor: 'rgba(0, 0, 200, 0.3)',
+          borderWidth: 1,
+          borderDash: [5, 3],
+          fill: false
         }
-      });
+      ]
     },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+},
+
     async changeCycle() {
       try {
         const requestBody = {
