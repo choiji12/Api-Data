@@ -77,13 +77,19 @@
  <ol>
   <li>
   <h3>cloudtype을 이용한 백엔드 배포</h3>
-  <img width="1186" alt="스크린샷 2023-11-27 오후 11 43 06" src="https://github.com/inhatc-RPi/project/assets/113498312/8a0240cd-3eed-4647-8c87-3db6f47d1e6e">
+  <img width="1090" alt="스크린샷 2023-11-27 오후 11 43 06" src="https://github.com/inhatc-RPi/project/assets/113498312/8fa74124-c315-4d45-90af-eb5e026082a2">
    
   </li>
   <li>
    <h3>라즈베리파이 데이터 송수신 구현</h3>
    
    ![무선넷_시스템_아키텍처의 사본](https://github.com/inhatc-RPi/project/assets/97776614/9e233a1f-6234-4332-9016-b6cef2b0379d)
+   
+  </li>
+  <li>
+   <h3>프론트엔드 서버 배포</h3>
+   
+   - 프론트엔드 URL: (https://choiji12.github.io/wireless_frontend/)
    
   </li>
  </ol>
@@ -105,6 +111,10 @@
    <br>
 <img width="171" alt="스크린샷 2023-11-30 오후 2 16 51" src="https://github.com/inhatc-RPi/project/assets/22267184/b7b93353-8786-4356-8a84-b6a2c5854987">
   </li>
+    <li>
+   <h3>프론트엔드랑 APi 서버연동</h3>
+   <img width="1186" alt="스크린샷 2023-11-27 오후 11 43 06" src="https://github.com/inhatc-RPi/project/assets/113498312/6efd97cf-6400-495a-bd78-371882468334">   
+   </li>
  </ol>
   <br>
  <hr>
